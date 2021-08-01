@@ -15,6 +15,17 @@ function addBookToLibrary(book) {
     myLibrary.push(book);
 };
 
+Book.prototype.toggleRead = function(div) {
+    if (this.read == '' || this.read == null) {
+        this.read = 'Not read';
+    } else if (this.read == 'Not read') {
+        this.read = "Read"
+    } else {
+        this.read = "Not read"
+    }
+}
+
+
 const theHobbit = new Book('The Hobbit', 'J.R.R Tolkien', '295', 'not read yet')
 addBookToLibrary(theHobbit);
 const theHungerGames = new Book('The Hunger Games', 'Jenny')
@@ -25,13 +36,31 @@ document.body.onload = displayLibrary();
 
 function displayLibrary() {
     for (i = 0; i < myLibrary.length; i++) {
-        currentBook = myLibrary[i].title;
-        div = document.createElement("div");
-        div.setAttribute('class', 'card');
-        div.innerHTML = `${currentBook}`;
-        container.appendChild(div);
+        var div = document.createElement("div");
+            div.setAttribute('class', 'card');
+            div.setAttribute('data', `myLibrary[${i}]`)
+            div.innerHTML = `${myLibrary[i].title}`;
+            container.appendChild(div);
+            createDeleteButton(div);
+            createReadButton(div, i);
     };
 };
+
+function createDeleteButton(div) {
+    var btn = document.createElement("BUTTON");
+        btn.setAttribute('class', 'delete-book')
+        btn.innerHTML = "Remove book";
+        div.appendChild(btn);
+        btn.onclick = () => div.remove();
+}
+
+function createReadButton(div, i) {
+    var btn = document.createElement("BUTTON");
+        btn.setAttribute('class', 'read-book')
+        btn.innerHTML = "Toggle read";
+        div.appendChild(btn);
+        btn.onclick = () => myLibrary[i].toggleRead(div)
+}
 
 //Script for pop-up with button
 document.querySelector('#new-book').onclick = () => togglePopup();
@@ -46,7 +75,7 @@ function togglePopup() {
     };
 };
 
-//Submit prompt input to add new book to library
+//Submit prompt event to add new book to library
 var form = document.querySelector("#form")
 
 form.onclick = () => submitForm(event);
@@ -63,12 +92,24 @@ function submitForm(event) {
     }
     var book = new Book(author, title, pages, read)
     addBookToLibrary(book);
-    addBookCard(book);
-}
+    resetLibrary();
+    displayLibrary();
+};
 
-function addBookCard(book) {
-    div = document.createElement("div");
-        div.setAttribute('class', 'card');
-        div.innerHTML = `${book.title}`;
-        container.appendChild(div);
-}
+function resetLibrary() {
+    document.querySelectorAll('.card').forEach(e => e.remove());
+};
+
+
+
+
+
+
+
+// addBookCard(book);
+// function addBookCard(book) {
+//     div = document.createElement("div");
+//         div.setAttribute('class', 'card');
+//         div.innerHTML = `${book.title}`;
+//         container.appendChild(div);
+// }
